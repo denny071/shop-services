@@ -1,0 +1,38 @@
+version: '2'
+services: 
+    database:
+        image: daocloud.io/mysql
+        volumes: 
+            - ./data:/var/lib/mysql:rw
+        ports:
+            - "3306:3306"
+        command: --default-authentication-plugin=mysql_native_password
+                 --character-set-server=utf8mb4
+                 --collation-server=utf8mb4_general_ci
+                 --max_connections=1000
+        restart: always
+        environment:
+            MYSQL_DATABASE: denny_shop
+            MYSQL_ROOT_PASSWORD: password #root管理员用户密码
+            MYSQL_USER: shop   #创建test用户
+            MYSQL_PASSWORD: shop  #设置test用户的密码
+        ports:
+            - '3306:3306'  #host物理直接映射端口为6606
+      
+    # admin
+    admin:
+        container_name: "shop-admin"
+        build: 
+            context: ../shop-admin
+            dockerfile: dockerfile
+        restart: always
+        volumes: 
+            - ./uploads:/var/www/website/public/uploads
+            - ./logs/admin/app_logs:/var/www/website/storage/logs
+            - ./logs/admin/var_logs:/var/log
+        ports:
+            - "8089:80"
+        depends_on:
+            - database
+    
+   
