@@ -14,7 +14,8 @@ ENV WEBSITE_DIR /var/www/website
  
 WORKDIR ${WEBSITE_DIR}
 
-RUN apk update \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk update \
 	&& apk upgrade \
 	&& apk add \
 		nginx \
@@ -55,14 +56,12 @@ RUN apk update \
 	&& mkdir -p /usr/local/var/log/php7/ \
 	&& mkdir -p /usr/local/var/run/ \
 	&& mkdir /run/nginx \
-	&& mkdir /var/log/nginx/ \
-	&& mkdir /var/log/php7/ \
     && mkdir /var/log/supervisord/ \
 	&& touch /run/nginx/nginx.pid \
-	&& mv ./conf/nginx.conf /etc/nginx/nginx.conf \
-	&& mv./conf/supervisord.conf /etc/supervisord.conf \
-	&& chmod 777 -R storage/ \
-    && makdr $(WEBSITE_DIR)
+    && mkdir $(WEBSITE_DIR)
+
+COPY ./conf/nginx.conf /etc/nginx/nginx.conf 
+COPY ./conf/supervisord.conf /etc/supervisord.conf 
 
 EXPOSE 80
 VOLUME ["/var/log/nginx","/var/log/php7","/var/log/supervisord"]
