@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class User extends Model
 {
+    use HasFactory;
     // end_at 会自动转为 Carbon 类型
     protected $dates = ['last_login_at', 'created_at'];
 

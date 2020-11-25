@@ -11,7 +11,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
-use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Http\Controllers\AdminController;
 
 
 /**

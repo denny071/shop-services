@@ -3,8 +3,8 @@
 namespace App\Admin\Controllers;
 
 use App\Admin\Metrics\Examples;
-use Dcat\Admin\Controllers\AdminController;
-use Dcat\Admin\Controllers\Dashboard;
+use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Http\Controllers\Dashboard;
 use Dcat\Admin\Layout\Column;
 use Dcat\Admin\Layout\Content;
 use Dcat\Admin\Layout\Row;
@@ -36,4 +36,5 @@ class HomeController extends AdminController
                 });
             });
     }
+
 }

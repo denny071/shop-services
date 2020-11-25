@@ -6,7 +6,7 @@ use App\Models\Coupon;
 use Carbon\Carbon;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Controllers\AdminController;
+use Dcat\Admin\Http\Controllers\AdminController;
 
 /**
  * CouponController 优惠券

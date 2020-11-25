@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Console\Commands\Elasticsearch\Migrate;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        //
     ];
 
     /**
@@ -24,10 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // 结束众筹 每分钟执行一次
-        $schedule->command('cron:finish-crowdfunding')->everyMinute();
-        // 统计分期付款 代表每天凌晨 00:00 执行
-        $schedule->command('cron:calculate-installment-fine')->daily();
+        // $schedule->command('inspire')->hourly();
     }
 
     /**
@@ -39,6 +36,6 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__.'/Commands');
 
-        // require base_path('routes/console.php');
+        require base_path('routes/console.php');
     }
 }

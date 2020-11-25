@@ -5,8 +5,8 @@ namespace App\Admin\Controllers;
 
 
 use App\Models\Product;
-use Dcat\Admin\Controllers\AdminController;
-use Dcat\Admin\Controllers\HasResourceActions;
+use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Http\Controllers\HasResourceActions;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Layout\Content;

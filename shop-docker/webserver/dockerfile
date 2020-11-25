@@ -11,8 +11,7 @@ ENV PHP_MAX_POST        100M
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV WEBSITE_DIR /var/www/website
 
- 
-WORKDIR ${WEBSITE_DIR}
+
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
     && apk update \
@@ -57,13 +56,19 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 	&& mkdir -p /usr/local/var/run/ \
 	&& mkdir /run/nginx \
     && mkdir /var/log/supervisord/ \
+	&& mkdir /var/run/supervisord/ \
+	&& mkdir -p ${WEBSITE_DIR} \
 	&& touch /run/nginx/nginx.pid \
-    && mkdir $(WEBSITE_DIR)
+	&& touch /var/run/supervisord/supervisord.pid
+
+WORKDIR ${WEBSITE_DIR}
 
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf 
 COPY ./conf/supervisord.conf /etc/supervisord.conf 
+COPY ./conf/entrypoint.sh .
+
 
 EXPOSE 80
 VOLUME ["/var/log/nginx","/var/log/php7","/var/log/supervisord"]
-ENTRYPOINT ["./entrypoint.sh"]
 
+ENTRYPOINT ["./entrypoint.sh"]

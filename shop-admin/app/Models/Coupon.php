@@ -5,10 +5,12 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\CouponCodeUnavailableException;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
 
 class Coupon extends Model
 {
+    use HasFactory;
     // 用常量的方法定义支持的优惠券类型
     const TYPE_FIXED = 'fixed';
     const TYPE_PERCENT = 'percent';

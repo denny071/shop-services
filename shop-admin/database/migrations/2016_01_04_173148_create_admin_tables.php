@@ -6,16 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateAdminTables extends Migration
 {
-    public function getConnection()
-    {
-        return config('database.connection') ?: config('database.default');
-    }
+
 
     public function config($key)
     {
         return config('admin.'.$key);
     }
-
     /**
      * Run the migrations.
      *
@@ -33,7 +29,7 @@ class CreateAdminTables extends Migration
             $table->timestamps();
         });
 
-
+        add_table_comment($this->config('database.users_table'),"管理员表");
 
         Schema::create($this->config('database.roles_table'), function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -41,6 +37,7 @@ class CreateAdminTables extends Migration
             $table->string('slug', 50)->unique();
             $table->timestamps();
         });
+        add_table_comment($this->config('database.roles_table'),"角色表");
 
         Schema::create($this->config('database.permissions_table'), function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -52,6 +49,7 @@ class CreateAdminTables extends Migration
             $table->bigInteger('parent_id')->default(0);
             $table->timestamps();
         });
+        add_table_comment($this->config('database.permissions_table'),"权限表");
 
         Schema::create($this->config('database.menu_table'), function (Blueprint $table) {
             $table->bigIncrements('id');
@@ -60,9 +58,12 @@ class CreateAdminTables extends Migration
             $table->string('title', 50);
             $table->string('icon', 50)->nullable();
             $table->string('uri', 50)->nullable();
+            $table->tinyInteger('show')->default(1);
+            $table->string('extension', 50)->default('');
 
             $table->timestamps();
         });
+        add_table_comment($this->config('database.menu_table'),"菜单表");
 
         Schema::create($this->config('database.role_users_table'), function (Blueprint $table) {
             $table->bigInteger('role_id');
@@ -70,6 +71,7 @@ class CreateAdminTables extends Migration
             $table->unique(['role_id', 'user_id']);
             $table->timestamps();
         });
+        add_table_comment($this->config('database.role_users_table'),"角色用户关联表");
 
         Schema::create($this->config('database.role_permissions_table'), function (Blueprint $table) {
             $table->bigInteger('role_id');
@@ -77,6 +79,7 @@ class CreateAdminTables extends Migration
             $table->unique(['role_id', 'permission_id']);
             $table->timestamps();
         });
+        add_table_comment($this->config('database.role_permissions_table'),"角色权限关联表");
 
         Schema::create($this->config('database.role_menu_table'), function (Blueprint $table) {
             $table->bigInteger('role_id');
@@ -84,6 +87,7 @@ class CreateAdminTables extends Migration
             $table->unique(['role_id', 'menu_id']);
             $table->timestamps();
         });
+        add_table_comment($this->config('database.role_menu_table'),"角色菜单关联表");
 
         Schema::create($this->config('database.permission_menu_table'), function (Blueprint $table) {
             $table->bigInteger('permission_id');
@@ -91,28 +95,43 @@ class CreateAdminTables extends Migration
             $table->unique(['permission_id', 'menu_id']);
             $table->timestamps();
         });
+        add_table_comment($this->config('database.permission_menu_table'),"权限菜单关联表");
 
-        Schema::create($this->config('database.operation_log_table'), function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('user_id');
-            $table->string('path');
-            $table->string('method', 10);
-            $table->string('ip');
-            $table->text('input');
-            $table->index('user_id');
+
+        Schema::create($this->config('database.settings_table'), function (Blueprint $table) {
+            $table->string('slug', 100)->primary();
+            $table->longText('value');
             $table->timestamps();
         });
+        add_table_comment($this->config('database.settings_table'),"后台配置表");
 
-        add_table_comment($this->config('database.users_table'),"后台管理员表");
-        add_table_comment($this->config('database.roles_table'),"后台角色表");
-        add_table_comment($this->config('database.permissions_table'),"后台权限表");
-        add_table_comment($this->config('database.menu_table'),"后台菜单表");
-        add_table_comment($this->config('database.role_users_table'),"后台管理员角色关联表");
-        add_table_comment($this->config('database.role_permissions_table'),"后台权限角色关联表");
-        add_table_comment($this->config('database.role_menu_table'),"后台角色菜单关联表");
-        add_table_comment($this->config('database.permission_menu_table'),"后台权限菜单关联表");
-        add_table_comment($this->config('database.operation_log_table'),"后台日志表");
-        add_table_comment("migrations","迁移表");
+
+        Schema::create( $this->config('database.extensions_table'), function (Blueprint $table) {
+            $table->increments('id')->unsigned();
+            $table->string('name', 100)->unique();
+            $table->string('version', 20)->default('');
+            $table->tinyInteger('is_enabled')->default(0);
+            $table->text('options')->nullable();
+            $table->timestamps();
+
+            $table->engine = 'InnoDB';
+        });
+        add_table_comment($this->config('database.extensions_table'),"后台扩展表");
+
+        Schema::create($this->config('database.extension_histories_table'), function (Blueprint $table) {
+            $table->bigIncrements('id')->unsigned();
+            $table->string('name', 100);
+            $table->tinyInteger('type')->default(1);
+            $table->string('version', 20)->default(0);
+            $table->text('detail')->nullable();
+
+            $table->index('name');
+            $table->timestamps();
+            $table->engine = 'InnoDB';
+        });
+        add_table_comment($this->config('database.extension_histories_table'),"后台扩展历史表");
+
+
     }
 
     /**
@@ -130,6 +149,8 @@ class CreateAdminTables extends Migration
         Schema::dropIfExists($this->config('database.role_permissions_table'));
         Schema::dropIfExists($this->config('database.role_menu_table'));
         Schema::dropIfExists($this->config('database.permission_menu_table'));
-        Schema::dropIfExists($this->config('database.operation_log_table'));
+        Schema::dropIfExists($this->config('database.settings_table'));
+        Schema::dropIfExists($this->config('database.extensions_table'));
+        Schema::dropIfExists($this->config('database.extension_histories_table'));
     }
 }
